@@ -1,6 +1,8 @@
 import express, { json } from "express";
 import mongoose from "mongoose";
 import { userRouter } from "./routers/userRouter";
+import { seedInitialProdcuts } from "./services/products/productsServices";
+import { productsRouter } from "./routers/productsRouter";
 
 // create the express server app
 const app = express();
@@ -17,10 +19,20 @@ mongoose
     console.log(err);
   });
 
+//seed products in the database
+seedInitialProdcuts();
+
 //use middle ware to parse json reqs body
 app.use(express.json());
-// use a router to handle/recieve reqs with specific urls for specific enitity
+// use a router to handle/recieve reqs with specific urls for users
 app.use("/users", userRouter);
+
+// use a router to handle/recieve reqs with specific urls for products
+app.use("/products", productsRouter);
+
+
+
+
 
 // make the server listen on port
 app.listen(port, () => {
