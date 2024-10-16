@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import { userRouter } from "./routers/userRouter";
 import { seedInitialProdcuts } from "./services/products/productsServices";
 import { productsRouter } from "./routers/productsRouter";
+import { cartsRouter } from "./routers/cartRouter";
+import { jwtValidator } from "./middleWares/jwtValidator";
 
 // create the express server app
 const app = express();
@@ -22,6 +24,11 @@ mongoose
 //seed products in the database
 seedInitialProdcuts();
 
+
+//use awtAuthentacation custom middle ware 
+// app.use(jwtValidator);
+
+
 //use middle ware to parse json reqs body
 app.use(express.json());
 // use a router to handle/recieve reqs with specific urls for users
@@ -31,7 +38,7 @@ app.use("/users", userRouter);
 app.use("/products", productsRouter);
 
 
-
+app.use("/carts", cartsRouter);
 
 
 // make the server listen on port
