@@ -11,7 +11,7 @@ export const seedInitialProdcuts = async () => {
   const exitingProducts = await getAllProducts();
 
   const products = [
-    { title: "testing product", image: "image.png", price: "40", stock: 3 },
+    { title: "testing product", image: "image.png", price: 40, stock: 3 },
   ];
 
   if (exitingProducts.length === 0) {
