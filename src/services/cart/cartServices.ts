@@ -29,8 +29,6 @@ export const addItemToCart = async ({
   //get the active cart
   const activeCart = await getActiveCart(userID);
 
-  //ToDO:!!!!!!!!!!
-
   //check if the product already in the cart
   const ExistedInActiveCart = activeCart.items.find(
     (CartItem) => CartItem.item.toString() === productId.toString()
@@ -70,4 +68,57 @@ export const addItemToCart = async ({
   return { data: updatedCart, status: 201 };
 };
 
-//add product to the cart collection
+//Interface for update product  in the active cart fucntion params
+
+interface cartItemUpdateProps {
+  productId: string;
+  newQuantity: number;
+  userID: string;
+}
+//update product in the active cart
+export const updateCartItem = async ({
+  productId,
+  newQuantity,
+  userID,
+}: cartItemUpdateProps) => {
+  //get the active cart
+  const activeCart = await getActiveCart(userID);
+
+  //search by productID in the active cart
+  const cartItem = activeCart.items.find(
+    (item) => item.item.toString() === productId.toString()
+  );
+
+  if (!cartItem) {
+    return { data: "product is not found in the active cart", status: 404 };
+  }
+  //check if the quantity is less than or equal the product stock
+  //get product stock form the database
+  const product = await productModel.findById(productId);
+
+  if (!product) {
+    return { data: "Product not found in the database", status: 400 };
+  }
+
+  //check for product stock
+  if (product.stock == 0 || product.stock < newQuantity) {
+    return {
+      data: `Sorry product quantity in stock is ${product.stock}`,
+      status: 400,
+    };
+  }
+
+  //remove the old item calculation from  total price
+  activeCart.totalPrice -= cartItem.quantity * cartItem.unitPrice;
+
+  //update the values that the user wants in the cart item
+  cartItem.quantity = newQuantity;
+
+  //recalulate the total price with every update
+  activeCart.totalPrice += cartItem.quantity * cartItem.unitPrice;
+
+  //save the sate of the database
+  activeCart.save();
+
+  return { data: cartItem, status: 202 };
+};

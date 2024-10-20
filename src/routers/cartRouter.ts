@@ -1,5 +1,9 @@
 import express from "express";
-import { addItemToCart, getActiveCart } from "../services/cart/cartServices";
+import {
+  addItemToCart,
+  getActiveCart,
+  updateCartItem,
+} from "../services/cart/cartServices";
 import { jwtValidator } from "../middleWares/jwtValidator";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 
@@ -20,11 +24,27 @@ cartsRouter.post("/item", jwtValidator, async (req, res) => {
   const userID = (req as ExtendedRequest).userInfo._id;
 
   //get the  product and quantity from the req body
-  
-  const {productId,quantity} = req.body;
+  const { productId, quantity } = req.body;
 
-  //add item to the active cart 
-  const response = await addItemToCart({productId,quantity,userID})
+  //add item to the active cart
+  const response = await addItemToCart({ productId, quantity, userID });
 
   res.status(response.status).send(response.data);
-  });
+});
+
+//ToDO:!!!!!!!!!!
+//update a product quantity in the cart
+
+cartsRouter.put("/item", jwtValidator, async (req, res) => {
+  //do authentication
+  //get the id of the current logged in  user
+  const userID = (req as ExtendedRequest).userInfo._id;
+
+  //get the  product and quantity from the req body
+  const { productId, newQuantity } = req.body;
+
+  //update the item in  the active cart
+  const response = await updateCartItem({ productId, newQuantity, userID });
+
+  res.status(response.status).send(response.data);
+});
