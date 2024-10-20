@@ -114,11 +114,44 @@ export const updateCartItem = async ({
   //update the values that the user wants in the cart item
   cartItem.quantity = newQuantity;
 
-  //recalulate the total price with every update
+  //recalculate the total price with every update
   activeCart.totalPrice += cartItem.quantity * cartItem.unitPrice;
 
   //save the sate of the database
   activeCart.save();
 
   return { data: cartItem, status: 202 };
+};
+
+//delete an item from a cart
+
+interface deleteItemProps {
+  userID: string;
+  productId: string;
+}
+
+export const deleteCartItem = async ({
+  userID,
+  productId,
+}: deleteItemProps) => {
+  //get the active cart
+  const activeCart = await getActiveCart(userID);
+  console.log(userID);
+  console.log(productId);
+  //find the item that want to be deleted in the cart
+  const cartItem = activeCart.items.find(
+    (item) => item.item.toString() === productId
+  );
+  //check if it existed in the cart
+  if (!cartItem) {
+    return { data: "item was not found in the cart", status: 404 };
+  }
+  //decrease the total price by the amount of the deleted item
+  activeCart.totalPrice -= cartItem.unitPrice * cartItem.quantity;
+
+  //find and delete the product from the active cart and update the active cart items
+  activeCart.items = activeCart.items.filter((item) => item.item.toString() !== productId);
+  //save cart status to the database
+  activeCart.save();
+  return { data: "The item is successfully deleted", status: 204 };
 };

@@ -3,9 +3,11 @@ import {
   addItemToCart,
   getActiveCart,
   updateCartItem,
+  deleteCartItem,
 } from "../services/cart/cartServices";
 import { jwtValidator } from "../middleWares/jwtValidator";
 import { ExtendedRequest } from "../types/ExtendedRequest";
+import { productModel } from "../models/productModel";
 
 export const cartsRouter = express.Router();
 
@@ -32,7 +34,6 @@ cartsRouter.post("/item", jwtValidator, async (req, res) => {
   res.status(response.status).send(response.data);
 });
 
-//ToDO:!!!!!!!!!!
 //update a product quantity in the cart
 
 cartsRouter.put("/item", jwtValidator, async (req, res) => {
@@ -48,3 +49,20 @@ cartsRouter.put("/item", jwtValidator, async (req, res) => {
 
   res.status(response.status).send(response.data);
 });
+
+//Delete an item in the active cart
+
+cartsRouter.delete("/item/:id", jwtValidator, async (req, res) => {
+  console.log("deleting end point");
+  //authenticate the user (make sure the one who wants to delete is a valid user)
+  const userID = (req as ExtendedRequest).userInfo._id;
+  //get product id
+  const productId = req.params.id;
+  //Delete an item from a cart service
+  const response = await deleteCartItem({ userID, productId });
+  //respond
+  res.status(response.status).send(response.data);
+});
+
+//ToDO:!!!!!!!!!!
+//Clear cart endpoint  
