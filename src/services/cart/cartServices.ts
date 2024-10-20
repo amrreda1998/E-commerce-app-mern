@@ -150,8 +150,28 @@ export const deleteCartItem = async ({
   activeCart.totalPrice -= cartItem.unitPrice * cartItem.quantity;
 
   //find and delete the product from the active cart and update the active cart items
-  activeCart.items = activeCart.items.filter((item) => item.item.toString() !== productId);
+  activeCart.items = activeCart.items.filter(
+    (item) => item.item.toString() !== productId
+  );
   //save cart status to the database
   activeCart.save();
   return { data: "The item is successfully deleted", status: 204 };
+};
+
+//clear cart service
+
+export const clearCart = async (userID: string) => {
+  //get the active cart
+  const activeCart = await getActiveCart(userID);
+  //check if the cart is already clear
+  if (activeCart.items.length === 0) {
+    return { data: "The cart is already empty", status: 400 };
+  }
+  //delete all items
+  activeCart.items = [];
+  //zero the total amount
+  activeCart.totalPrice = 0;
+  //save the state to the database
+  activeCart.save();
+  return { data: "the cart has been cleared", status: 200 };
 };

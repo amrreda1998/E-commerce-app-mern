@@ -4,6 +4,7 @@ import {
   getActiveCart,
   updateCartItem,
   deleteCartItem,
+  clearCart,
 } from "../services/cart/cartServices";
 import { jwtValidator } from "../middleWares/jwtValidator";
 import { ExtendedRequest } from "../types/ExtendedRequest";
@@ -53,16 +54,28 @@ cartsRouter.put("/item", jwtValidator, async (req, res) => {
 //Delete an item in the active cart
 
 cartsRouter.delete("/item/:id", jwtValidator, async (req, res) => {
-  console.log("deleting end point");
   //authenticate the user (make sure the one who wants to delete is a valid user)
   const userID = (req as ExtendedRequest).userInfo._id;
   //get product id
   const productId = req.params.id;
-  //Delete an item from a cart service
-  const response = await deleteCartItem({ userID, productId });
-  //respond
-  res.status(response.status).send(response.data);
+
+  //clear the cart if the user sent "all" in the url
+  if (productId === "all") {
+    //clear all items service
+    const response = await clearCart(userID);
+    res.status(response.status).send(response.data);
+  } else {
+    //Delete an item from a cart service
+    const response = await deleteCartItem({ userID, productId });
+    //respond
+    res.status(response.status).send(response.data);
+  }
 });
 
-//ToDO:!!!!!!!!!!
-//Clear cart endpoint  
+cartsRouter.delete("/item/", jwtValidator, async (req, res) => {
+  //authenticate the user (make sure the one who wants to delete is a valid user)
+  const userID = (req as ExtendedRequest).userInfo._id;
+  //clear all items service
+  const response = await clearCart(userID);
+  res.status(response.status).send(response.data);
+});
