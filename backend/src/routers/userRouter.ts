@@ -28,7 +28,7 @@ userRouter.post("/login", async (req, res) => {
     res.status(statusCode).send(data);
   } catch (err) {
     console.error(err);
-    res.status(400).send("Error saving new data");
+    res.status(400).send("Error during login");
   }
 });
 

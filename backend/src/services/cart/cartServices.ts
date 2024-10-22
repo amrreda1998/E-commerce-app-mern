@@ -2,7 +2,7 @@
 
 import { cartModel, ICartItem } from "../../models/cartModel";
 import { IOrderItem, orderModel } from "../../models/orderModel";
-import { Iproduct, productModel } from "./../../models/productModel";
+import { Iproduct, productModel } from "../../models/productModel";
 
 export const getActiveCart = async (userID: string) => {
   const activeCart = await cartModel.findOne({ userID, status: "active" });
