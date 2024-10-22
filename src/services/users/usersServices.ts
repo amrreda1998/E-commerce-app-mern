@@ -54,9 +54,6 @@ export const login = async ({ email, password }: loginData) => {
   } else {
     //check for password correctness
     const passwordMatch = await bcrypt.compare(password, findUser.password);
-    console.log(passwordMatch);
-    console.log(password);
-    console.log(findUser.password);
 
     if (passwordMatch) {
       return {

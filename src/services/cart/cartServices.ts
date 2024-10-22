@@ -1,6 +1,7 @@
 //get all products in the cart collection
 
-import { cartModel } from "../../models/cartModel";
+import { cartModel, ICartItem } from "../../models/cartModel";
+import { IOrderItem, orderModel } from "../../models/orderModel";
 import { Iproduct, productModel } from "./../../models/productModel";
 
 export const getActiveCart = async (userID: string) => {
@@ -58,6 +59,7 @@ export const addItemToCart = async ({
     unitPrice: product.price,
     quantity: quantity,
   });
+
   //update the total amount of the cart
   activeCart.totalPrice += product.price * quantity;
 
@@ -174,4 +176,70 @@ export const clearCart = async (userID: string) => {
   //save the state to the database
   activeCart.save();
   return { data: "the cart has been cleared", status: 200 };
+};
+
+//checkout service
+
+export const checkOut = async (userID: string, address: string) => {
+  //get active cart
+  const activeCart = await getActiveCart(userID);
+  //check if the cart is empty :
+  if (activeCart.items.length === 0) {
+    return { data: "The cart is empty !!", status: 400 };
+  }
+
+  const createAnOrderItem = (product: Iproduct, item: ICartItem) => {
+    const orderItem: IOrderItem = {
+      title: product.title,
+      image: product.image,
+      unitPrice: item.unitPrice,
+      quantity: item.quantity,
+    };
+
+    //update the prodcut stock status in the database
+    product.stock -= item.quantity;
+    product.save();
+
+    return orderItem;
+  };
+
+  const createOrderItems = async (cartItems: ICartItem[]) => {
+    const orderItems: IOrderItem[] = [];
+
+    // Use for...of to handle async/await properly in loops
+    for (const item of cartItems) {
+      // Get the product info from the product database collection
+      const product = await productModel.findById(item.item);
+
+      // Check if the product exists in the database
+      if (!product) {
+        return {
+          data: "Cannot find the product in the database",
+          status: 404,
+        };
+      }
+
+      // Create an order
+      const orderItem = createAnOrderItem(product, item);
+
+      // Push the order item into the orderItems array
+      orderItems.push(orderItem);
+    }
+
+    return orderItems; // Return the populated orderItems array
+  };
+
+  // Creating the new order
+  const newOrder = await orderModel.create({
+    userID: userID,
+    address: address,
+    totalPrice: activeCart.totalPrice,
+    orderItems: await createOrderItems(activeCart.items),
+  });
+
+  //update the cart status
+  activeCart.status = "completed";
+  activeCart.save();
+
+  return { data: newOrder, status: 201 };
 };

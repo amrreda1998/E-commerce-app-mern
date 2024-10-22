@@ -5,10 +5,14 @@ import {
   updateCartItem,
   deleteCartItem,
   clearCart,
+  checkOut,
 } from "../services/cart/cartServices";
 import { jwtValidator } from "../middleWares/jwtValidator";
 import { ExtendedRequest } from "../types/ExtendedRequest";
 import { productModel } from "../models/productModel";
+import { IOrderItem, orderModel } from "../models/orderModel";
+import { userModel } from "../models/userModel";
+import { ICartItem } from "../models/cartModel";
 
 export const cartsRouter = express.Router();
 
@@ -78,4 +82,16 @@ cartsRouter.delete("/item/", jwtValidator, async (req, res) => {
   //clear all items service
   const response = await clearCart(userID);
   res.status(response.status).send(response.data);
+});
+
+cartsRouter.post("/checkout", jwtValidator, async (req, res) => {
+  //authenticate the user (make sure the one who wants to delete is a valid user)
+  const userID = (req as ExtendedRequest).userInfo._id;
+
+  //get the address from the req body
+  const { address } = req.body;
+
+  //checkout process
+  const checkOutResponse = await checkOut(userID, address);
+  res.status(checkOutResponse.status).send(checkOutResponse.data);
 });
