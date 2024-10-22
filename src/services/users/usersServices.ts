@@ -72,9 +72,6 @@ export const login = async ({ email, password }: loginData) => {
 
 //generate jwt for autorized users
 const generateJWT = (data: string | object) => {
-  const token = jwt.sign(
-    data,
-    "8ceafb6b5ef33b32339be9ed01fdff972d919f084895ef469745b505be6a5087"
-  );
+  const token = jwt.sign(data, process.env.JWT_SECRET || "");
   return token;
 };

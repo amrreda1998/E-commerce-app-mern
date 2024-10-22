@@ -224,6 +224,8 @@ export const checkOut = async (userID: string, address: string) => {
 
       // Push the order item into the orderItems array
       orderItems.push(orderItem);
+      
+    
     }
 
     return orderItems; // Return the populated orderItems array
@@ -240,6 +242,6 @@ export const checkOut = async (userID: string, address: string) => {
   //update the cart status
   activeCart.status = "completed";
   activeCart.save();
-
+  
   return { data: newOrder, status: 201 };
 };

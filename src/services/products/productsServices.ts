@@ -8,13 +8,17 @@ export const getAllProducts = async () => {
 };
 
 export const seedInitialProdcuts = async () => {
-  const exitingProducts = await getAllProducts();
+  try {
+    const exitingProducts = await getAllProducts();
 
-  const products = [
-    { title: "testing product", image: "image.png", price: 40, stock: 3 },
-  ];
+    const products = [
+      { title: "testing product", image: "image.png", price: 40, stock: 3 },
+    ];
 
-  if (exitingProducts.length === 0) {
-    await productModel.insertMany(products);
+    if (exitingProducts.length === 0) {
+      await productModel.insertMany(products);
+    }
+  } catch (error) {
+    console.error("Cannot connect to the database \n", error);
   }
 };

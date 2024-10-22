@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Jwt from "jsonwebtoken";
 import { userModel } from "../models/userModel";
-import { ExtendedRequest } from "../types/ExtendedRequest";
+import { ExtendedRequest } from "../types/extendedRequest";
 
 export const jwtValidator = (
   req: Request,
@@ -23,7 +23,7 @@ export const jwtValidator = (
   //validate the token provided in the auth header
   Jwt.verify(
     token,
-    "8ceafb6b5ef33b32339be9ed01fdff972d919f084895ef469745b505be6a5087",
+    process.env.JWT_SECRET||"",
     async (err, payload) => {
       if (err) {
         res.status(403).send("invalid token");
@@ -40,10 +40,14 @@ export const jwtValidator = (
         firstName: string;
         lastName: string;
       };
-      //get the user info from the users collection
-      const userInfo = await userModel.findOne({ email: IuserPayLoad.email });
-      //update the revieved request so that we can extract user info from it
-      (req as ExtendedRequest).userInfo = userInfo;
+      try {
+        //get the user info from the users collection
+        const userInfo = await userModel.findOne({ email: IuserPayLoad.email });
+        //update the revieved request so that we can extract user info from it
+        (req as ExtendedRequest).userInfo = userInfo;
+      } catch (error) {
+        res.status(500).send("something goes wrong !!! ");
+      }
       next();
     }
   );
