@@ -5,6 +5,7 @@ import { seedInitialProdcuts } from "./services/products/productsServices";
 import { productsRouter } from "./routers/productsRouter";
 import { cartsRouter } from "./routers/cartRouter";
 import "dotenv/config";
+import cors from "cors";
 
 // create the express server app
 const app = express();
@@ -24,9 +25,8 @@ mongoose
 //seed products in the database
 seedInitialProdcuts();
 
-//use awtAuthentacation custom middle ware
-// app.use(jwtValidator);
-
+//use middle wate to determine the domains that can request data from the backend
+app.use(cors());
 //use middle ware to parse json reqs body
 app.use(express.json());
 // use a router to handle/recieve reqs with specific urls for users
