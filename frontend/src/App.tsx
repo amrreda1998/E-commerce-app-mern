@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
+import RegistrationPage from "./pages/RegistrationPage";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Navbar></Navbar>
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
+        <Route path="/register" element={<RegistrationPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

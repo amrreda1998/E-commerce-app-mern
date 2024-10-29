@@ -27,7 +27,7 @@ const HomePage = () => {
   if (error) {
     return (
       <Box sx={{ fontSize: 30, fontWeight: 4, textAlign: "center", mt: 10 }}>
-        Somtheing went wrong :( !!!!{" "}
+        Something went wrong ☹️ !!!!
       </Box>
     );
   }

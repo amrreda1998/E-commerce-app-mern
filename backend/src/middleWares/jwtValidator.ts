@@ -21,34 +21,30 @@ export const jwtValidator = (
     return;
   }
   //validate the token provided in the auth header
-  Jwt.verify(
-    token,
-    process.env.JWT_SECRET||"",
-    async (err, payload) => {
-      if (err) {
-        res.status(403).send("invalid token");
-        return;
-      }
-      //verify payload existence
-      if (!payload) {
-        res.status(403).send("invalid payload");
-        return;
-      }
-      //define the type of a user payload
-      const IuserPayLoad = payload as {
-        email: string;
-        firstName: string;
-        lastName: string;
-      };
-      try {
-        //get the user info from the users collection
-        const userInfo = await userModel.findOne({ email: IuserPayLoad.email });
-        //update the revieved request so that we can extract user info from it
-        (req as ExtendedRequest).userInfo = userInfo;
-      } catch (error) {
-        res.status(500).send("something goes wrong !!! ");
-      }
-      next();
+  Jwt.verify(token, process.env.JWT_SECRET || "", async (err, payload) => {
+    if (err) {
+      res.status(403).send("invalid token");
+      return;
     }
-  );
+    //verify payload existence
+    if (!payload) {
+      res.status(403).send("invalid payload");
+      return;
+    }
+    //define the type of a user payload
+    const IuserPayLoad = payload as {
+      email: string;
+      firstName: string;
+      lastName: string;
+    };
+    try {
+      //get the user info from the users collection
+      const userInfo = await userModel.findOne({ email: IuserPayLoad.email });
+      //update the received request so that we can extract user info from it
+      (req as ExtendedRequest).userInfo = userInfo;
+    } catch (error) {
+      res.status(500).send("something goes wrong !!! ");
+    }
+    next();
+  });
 };

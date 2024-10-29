@@ -13,7 +13,7 @@ interface registerData {
   password: string;
 }
 
-export const register = async ({
+export const  register = async ({
   firstName,
   lastName,
   email,
