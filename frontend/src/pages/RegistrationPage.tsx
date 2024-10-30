@@ -2,6 +2,7 @@ import { Container, TextField, Button, Typography, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useState } from "react";
 import { BackendURL } from "../constants/baseURL";
+import { useAuth } from "../Auth/AuthContext";
 
 const RegistrationPage = () => {
   // State for form fields
@@ -12,7 +13,7 @@ const RegistrationPage = () => {
     password: "",
   });
   //handel errors
-  const [error, setError] = useState(false);
+  const [Error, setError] = useState(false);
   //handel success
   const [isRegistered, setIsRegistered] = useState(false);
   //handel email exist
@@ -22,6 +23,9 @@ const RegistrationPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  //use authenticatinContext
+  const { setAuthData } = useAuth();
 
   // Handling form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,10 +48,13 @@ const RegistrationPage = () => {
             password: formData.password,
           }),
         });
+
         const { data } = await response.json();
         console.log(data);
-        //TODO:
-        //store response (the token) of the user to use it in the login phase or any other requests
+
+        //store response (the token) of the user to
+        //use it when the user try to request a service form the backend (authentucat)
+        setAuthData(formData.email, data);
 
         if (response.ok) {
           setIsRegistered(true);
@@ -62,10 +69,10 @@ const RegistrationPage = () => {
     fetchData();
   };
 
-  if (error) {
+  if (Error) {
     return (
       <Box sx={{ fontSize: 30, fontWeight: 4, textAlign: "center", mt: 10 }}>
-        Somtheing went wrong :( !!!!{" "}
+        Somtheing went wrong ☹️ !!!!{" "}
       </Box>
     );
   }

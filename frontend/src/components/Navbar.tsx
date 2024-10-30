@@ -10,10 +10,14 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { useAuth } from "../Auth/AuthContext";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Navbar() {
+  //Testing AuthContext
+  const { email, token } = useAuth();
+
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -26,9 +30,11 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  console.log("From NavBar", { email, token });
+
   return (
-    <AppBar position="static" >
-      <Container maxWidth="xl" >
+    <AppBar position="static">
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Logo Icon and Text on the Left for desktop */}
           <AdbIcon
