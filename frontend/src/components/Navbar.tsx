@@ -62,7 +62,7 @@ function Navbar() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -112,9 +112,11 @@ function Navbar() {
               </Tooltip>
             </Box>
           ) : (
-            <Button color="inherit" onClick={handleLogin}>
-              Login
-            </Button>
+            location.pathname !== "/login" && (
+              <Button color="inherit" onClick={handleLogin}>
+                Login
+              </Button>
+            )
           )}
 
           <Menu
