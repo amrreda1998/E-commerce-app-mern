@@ -3,21 +3,23 @@ import Grid from "@mui/material/Grid2";
 import { useState } from "react";
 import { BackendURL } from "../constants/baseURL";
 import { useAuth } from "../Auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const RegistrationPage = () => {
+const LoginPage = () => {
+  // define the navigation hook
+  const navigate = useNavigate();
+
   // State for form fields
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
     email: "",
     password: "",
   });
   //handel errors
   const [Error, setError] = useState(false);
   //handel success
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   //handel email exist
-  const [isEmailExist, setisEmailExist] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
 
   // Handling form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,17 +35,15 @@ const RegistrationPage = () => {
     // Add your form submission logic here
     console.log("Form Data Submitted:", formData);
 
-    //send the registraion info to the server
+    // send the login info to the server
     const fetchData = async () => {
       try {
-        const response = await fetch(`${BackendURL}/users/register`, {
+        const response = await fetch(`${BackendURL}/users/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
             email: formData.email,
             password: formData.password,
           }),
@@ -52,14 +52,13 @@ const RegistrationPage = () => {
         const { data } = await response.json();
         console.log(data);
 
-        //store response (the token) of the user to
-        //use it in valdation of user login status and user requests
-        setAuthData(formData.email, data);
-
         if (response.ok) {
-          setIsRegistered(true);
+          //store response (the token) of the user to
+          //use it when the user try to request a service form the backend (authentucat)
+          setAuthData(formData.email, data);
+          setIsLogin(true);
         } else {
-          setisEmailExist(true);
+          setIsValidEmail(false);
         }
       } catch (err) {
         setError(true);
@@ -77,27 +76,9 @@ const RegistrationPage = () => {
     );
   }
 
-  if (isRegistered) {
-    return (
-      <>
-        <Box
-          sx={{
-            fontSize: 50,
-            fontWeight: 700, // Make it bolder
-            textAlign: "center",
-            mt: 10,
-            color: "green",
-            backgroundColor: "rgba(76, 175, 80, 0.1)", // Light green background
-            border: "1px solid #4CAF50", // Green border
-            borderRadius: "8px", // Rounded corners
-            padding: "20px", // Add some padding
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Slight shadow for depth
-          }}
-        >
-          You have been successfully registered 😄🥳
-        </Box>
-      </>
-    );
+  if (isLogin) {
+    //navigate to the home page
+    navigate("/");
   }
 
   return (
@@ -123,29 +104,9 @@ const RegistrationPage = () => {
         }}
       >
         <Typography variant="h4" sx={{ textAlign: "center", mb: 3 }}>
-          Registration Page
+          Login Page
         </Typography>
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="First Name"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="Last Name"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
           <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
@@ -176,10 +137,10 @@ const RegistrationPage = () => {
               type="submit"
               size="large"
             >
-              Register
+              Login
             </Button>
           </Grid>
-          {isEmailExist && (
+          {isValidEmail || (
             <Grid size={{ xs: 12 }}>
               <Box
                 sx={{
@@ -190,7 +151,7 @@ const RegistrationPage = () => {
                   color: "#ff1744",
                 }}
               >
-                Email is already exist !!!!
+                Wrong Email or Password !!!!
               </Box>
             </Grid>
           )}
@@ -200,4 +161,4 @@ const RegistrationPage = () => {
   );
 };
 
-export default RegistrationPage;
+export default LoginPage;

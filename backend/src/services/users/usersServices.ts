@@ -13,7 +13,7 @@ interface registerData {
   password: string;
 }
 
-export const  register = async ({
+export const register = async ({
   firstName,
   lastName,
   email,
@@ -65,7 +65,7 @@ export const login = async ({ email, password }: loginData) => {
         statusCode: 200,
       };
     } else {
-      return { data: "Incorect Password", statusCode: 400 };
+      return { data: "Incorrect Password", statusCode: 400 };
     }
   }
 };

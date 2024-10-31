@@ -12,7 +12,7 @@ userRouter.post("/register", async (req, res) => {
     //create and save a new user document from the req body using userModel.
     const { statusCode, data } = await register(req.body);
     //respond to the front end with status code and data that is created in the database
-    res.status(statusCode).send({data:data});
+    res.status(statusCode).send({ data: data });
   } catch (err) {
     console.error(err);
     res.status(400).send({ message: "Error saving new data" });
@@ -25,10 +25,10 @@ userRouter.post("/login", async (req, res) => {
     //use login service
     const { data, statusCode } = await login(req.body);
     //respond to the front end with status code and data
-    res.status(statusCode).send(data);
+    res.status(statusCode).send({ data: data });
   } catch (err) {
     console.error(err);
-    res.status(400).send("Error during login");
+    res.status(400).send({ message: "Error during login" });
   }
 });
 

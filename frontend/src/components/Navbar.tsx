@@ -10,13 +10,13 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import Button from "@mui/material/Button";
 import { useAuth } from "../Auth/AuthContext";
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 function Navbar() {
-  //Testing AuthContext
-  const { email, token } = useAuth();
+  const { email, token, clearAuthData } = useAuth();
+  const navigate = useNavigate();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
@@ -30,13 +30,31 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  const handleLogin = () => {
+    navigate("/login"); // Redirect to login page
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("User logged out");
+    setAnchorElUser(null);
+    //clear authentication data
+    clearAuthData();
+  };
+
+  const handleMyOrders = () => {
+    // Add your "My Orders" navigation logic here
+    console.log("Navigating to My Orders");
+    navigate("/orders");
+    setAnchorElUser(null);
+  };
+
   console.log("From NavBar", { email, token });
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Logo Icon and Text on the Left for desktop */}
           <AdbIcon
             sx={{ display: { xs: "none", md: "flex" }, mr: 1, fontSize: 40 }}
           />
@@ -53,15 +71,12 @@ function Navbar() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              fontSize: { xs: "1.2rem", md: "1.5rem" },
             }}
           >
             Tech Store
           </Typography>
 
-          {/* Logo Icon and Text on the Left for mobile */}
-          <AdbIcon
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1, fontSize: 30 }}
-          />
           <Typography
             variant="h5"
             noWrap
@@ -73,47 +88,59 @@ function Navbar() {
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+              letterSpacing: ".2rem",
               color: "inherit",
               textDecoration: "none",
+              fontSize: { xs: "1.2rem", md: "1.5rem" },
             }}
           >
             Tech Store
           </Typography>
 
-          {/* User Avatar and Settings on the Right */}
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 1 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: "center" }}>
-                    {setting}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+
+          {/* Conditional Rendering: Login Button if not logged in, otherwise Avatar and Email */}
+          {email ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography variant="subtitle1" sx={{ color: "white" }}>
+                {email}
+              </Typography>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 1 }}>
+                  <Avatar alt={email} src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          ) : (
+            <Button color="inherit" onClick={handleLogin}>
+              Login
+            </Button>
+          )}
+
+          <Menu
+            sx={{ mt: "45px" }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {/* Menu items with handlers for My Orders and Logout */}
+            <MenuItem onClick={handleMyOrders}>
+              <Typography sx={{ textAlign: "center" }}>My Orders</Typography>
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <Typography sx={{ textAlign: "center" }}>Logout</Typography>
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </Container>
     </AppBar>
