@@ -51,3 +51,44 @@
       console.error("Error adding cart item:", error);
     }
   };
+
+
+
+    // Function to update the cart item on the backend
+    export const ClearCartFrombackend = async (token: string) => {
+      try {
+        const response = await fetch("http://localhost:3001/carts/item/", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to Clear the Cart");
+        }
+    
+        // Optionally, handle successful response if needed
+        const data = await response.json();
+        console.log("Cart has been cleared :", data);
+      } catch (error) {
+        console.error("Error Clearing the cart :", error);
+      }
+    };
+
+
+
+  // Function to add a new cart item on the backend
+  export const removeItemFromBackend = async (productId: string ,token:string) => {
+
+      const response = await fetch(`http://localhost:3001/carts/item/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(await response.json());
+
+  };

@@ -7,6 +7,8 @@ interface CartContextType {
   totalPrice: number;
   addToCart: (item: CartItemProps, token: string) => void;
   setCartData: (items: CartItemProps[], value: number) => void;
+  removeItem:(itemId:string)=>void;
+  clearCart:()=>void;
 }
 
 // Create a Cart Context with undefined as the initial value

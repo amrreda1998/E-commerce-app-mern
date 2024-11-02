@@ -1,7 +1,13 @@
 import React, { useState, ReactNode } from "react";
 import { CartContext } from "./CartContext";
 import { CartItemProps, productCardProps } from "../types/productType";
-import { addCartItem, updateCartItem } from "./helperFunctions";
+import {
+  addCartItem,
+  ClearCartFrombackend,
+  removeItemFromBackend,
+  updateCartItem,
+} from "./helperFunctions";
+import { useAuth } from "../Auth/AuthContext";
 
 // Define the provider component
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
@@ -9,6 +15,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const { token } = useAuth();
 
   const addToCart = async (item: productCardProps, token: string) => {
     setCartItems((prevItems) => {
@@ -88,11 +95,41 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     setTotalPrice(totalPrice);
   };
 
+  const removeItem = (id: string) => {
+    if (token) {
+      //Front end removal
+      const productToRemove = cartItems.find((item) => item.item.toString() === id);
+      if (productToRemove) {
+        //recalulate the total price
+        const newtotalPrice =
+          totalPrice - productToRemove.price * productToRemove.quantity;
+
+        const newCartItems = cartItems.filter((item) => item.item.toString() !== id);
+        console.log(newCartItems);
+        setCartData(newCartItems, newtotalPrice);
+        // backend removal
+        removeItemFromBackend(id, token);
+      }
+    }
+  };
+
+  const clearCart = () => {
+    if (token) {
+      //front end clearing
+      setCartData([], 0);
+      console.log("Cart has been cleared");
+      //back end clearnig
+      ClearCartFrombackend(token);
+    }
+  };
+
   const value = {
     cartItems,
     totalPrice,
     addToCart,
     setCartData,
+    removeItem,
+    clearCart,
   };
 
   // Provide context values to children

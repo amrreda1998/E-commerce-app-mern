@@ -149,8 +149,6 @@ export const deleteCartItem = async ({
 }: deleteItemProps) => {
   //get the active cart
   const activeCart = await getActiveCart({ userID });
-  console.log(userID);
-  console.log(productId);
   //find the item that want to be deleted in the cart
   const cartItem = activeCart.items.find(
     (item) => item.item.toString() === productId
@@ -168,7 +166,7 @@ export const deleteCartItem = async ({
   );
   //save cart status to the database
   activeCart.save();
-  return { data: "The item is successfully deleted", status: 204 };
+  return { data: "The item is successfully deleted", status: 200 };
 };
 
 //clear cart service

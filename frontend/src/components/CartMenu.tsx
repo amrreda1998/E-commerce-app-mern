@@ -7,6 +7,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import DeleteIcon from "@mui/icons-material/Delete"; // Import delete icon
+import Button from "@mui/material/Button"; // Import button for clear cart
 import { useCart } from "../Cart/CartContext";
 import { useAuth } from "../Auth/AuthContext";
 import { useEffect } from "react";
@@ -23,7 +25,8 @@ function CartMenu({
   handleCloseCartMenu,
 }: CartMenuProps) {
   const { token } = useAuth();
-  const { cartItems, totalPrice, setCartData } = useCart();
+  const { cartItems, totalPrice, setCartData, removeItem, clearCart } =
+    useCart();
 
   useEffect(() => {
     if (token) {
@@ -39,13 +42,24 @@ function CartMenu({
         })
         .catch((error) => console.error("Error fetching cart data:", error));
     }
-  }, [token, setCartData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   // Calculate the total quantity of items in the cart
   const totalCartQuantity = cartItems.reduce(
     (acc, item) => acc + item.quantity,
     0
   );
+
+  // Handle item removal
+  const handleRemoveItem = (itemId: string) => {
+    removeItem(itemId);
+  };
+
+  // Handle clearing the cart
+  const handleClearCart = () => {
+    clearCart();
+  };
 
   return (
     <>
@@ -82,12 +96,19 @@ function CartMenu({
               alt={item.title}
               sx={{ width: 40, height: 40, borderRadius: 1 }}
             />
-            <Box>
+            <Box sx={{ flexGrow: 1 }}>
               <Typography variant="subtitle1">{item.title}</Typography>
               <Typography variant="body2" color="textSecondary">
                 Price: EGP {item.price} | Qty: {item.quantity}
               </Typography>
             </Box>
+            <IconButton
+              color="error"
+              onClick={() => handleRemoveItem(item.item.toString())}
+              aria-label="delete"
+            >
+              <DeleteIcon />
+            </IconButton>
           </MenuItem>
         ))}
 
@@ -96,6 +117,12 @@ function CartMenu({
             Total: EGP {totalPrice}
           </Typography>
         </MenuItem>
+
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 1 }}>
+          <Button variant="contained" color="error" onClick={handleClearCart}>
+            Clear Cart
+          </Button>
+        </Box>
       </Menu>
     </>
   );

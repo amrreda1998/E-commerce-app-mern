@@ -101,26 +101,21 @@ cartsRouter.put("/item", jwtValidator, async (req, res) => {
 
 cartsRouter.delete("/item/:id", jwtValidator, async (req, res) => {
   try {
-    //authenticate the user (make sure the one who wants to delete is a valid user)
     const userID = (req as ExtendedRequest).userInfo._id;
-    //get product id
     const productId = req.params.id;
 
-    //clear the cart if the user sent "all" in the url
     if (productId === "all") {
-      //clear all items service
       const response = await clearCart(userID);
-      res.status(response.status).send({ data: response.data });
+      res.status(response.status).json({ data: response.data });
     } else {
-      //Delete an item from a cart service
       const response = await deleteCartItem({ userID, productId });
-      //respond
-      res.status(response.status).send({ data: response.data });
+      res.status(response.status).json(response); // Send JSON response
     }
   } catch (error) {
-    res.status(500).send({ message: "something goes wrong !!! " });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 });
+
 
 cartsRouter.delete("/item/", jwtValidator, async (req, res) => {
   try {
