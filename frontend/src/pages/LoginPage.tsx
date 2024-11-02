@@ -57,6 +57,7 @@ const LoginPage = () => {
           //use it when the user try to request a service form the backend (authentucat)
           setAuthData(formData.email, data);
           setIsLogin(true);
+          
         } else {
           setIsValidEmail(false);
         }

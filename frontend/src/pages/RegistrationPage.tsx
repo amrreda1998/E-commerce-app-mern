@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid2";
 import { useState } from "react";
 import { BackendURL } from "../constants/baseURL";
 import { useAuth } from "../Auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const RegistrationPage = () => {
   // State for form fields
@@ -18,6 +19,9 @@ const RegistrationPage = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   //handel email exist
   const [isEmailExist, setisEmailExist] = useState(false);
+
+  //navigator
+  const navigate = useNavigate();
 
   // Handling form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +62,9 @@ const RegistrationPage = () => {
 
         if (response.ok) {
           setIsRegistered(true);
+          setTimeout(() => {
+            navigate("/");
+          }, 1000); // 1000 milliseconds = 1 second
         } else {
           setisEmailExist(true);
         }
