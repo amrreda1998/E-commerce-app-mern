@@ -12,19 +12,16 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Button from "@mui/material/Button";
 import { useAuth } from "../Auth/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import CartMenu from "./CartMenu";
 
 function Navbar() {
   const { email, token, clearAuthData } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElCart, setAnchorElCart] = React.useState<null | HTMLElement>(
-    null
-  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [anchorElCart, setAnchorElCart] = React.useState<null | HTMLElement>(null);
 
   const handleOpenCartMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCart(event.currentTarget);
@@ -46,6 +43,10 @@ function Navbar() {
     navigate("/login");
   };
 
+  const handleRegister = () => {
+    navigate("/register"); // Navigate to the registration page
+  };
+
   const handleLogout = () => {
     setAnchorElUser(null);
     clearAuthData();
@@ -61,9 +62,7 @@ function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1, fontSize: 40 }}
-          />
+          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1, fontSize: 40 }} />
           <Typography
             variant="h6"
             noWrap
@@ -151,10 +150,23 @@ function Navbar() {
               </Menu>
             </Box>
           ) : (
-            location.pathname !== "/login" && (
+            location.pathname === "/login" ? (
+              <Button color="inherit" onClick={handleRegister}>
+                Register
+              </Button>
+            ) : location.pathname === "/register" ? (
               <Button color="inherit" onClick={handleLogin}>
                 Login
               </Button>
+            ) : (
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button color="inherit" onClick={handleLogin}>
+                  Login
+                </Button>
+                <Button color="inherit" onClick={handleRegister}>
+                  Register
+                </Button>
+              </Box>
             )
           )}
         </Toolbar>

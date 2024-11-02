@@ -29,13 +29,13 @@ const CheckoutPage = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
 
   // Handle the submission of the order
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     // Logic for submitting the order
     console.log("Order submitted!", cartItems);
 
     //handle checkout from the backend
     if (token) {
-      const response = checkoutFromBackend(USER_ADDRESS, token);
+      const response = await checkoutFromBackend(USER_ADDRESS, token);
       console.log(response);
     }
 
