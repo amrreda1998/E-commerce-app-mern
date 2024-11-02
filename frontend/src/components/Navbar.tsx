@@ -10,12 +10,10 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Button from "@mui/material/Button";
-import Badge from "@mui/material/Badge"; // Import Badge component
 import { useAuth } from "../Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../Cart/CartContext";
+import CartMenu from "./CartMenu";
 
 function Navbar() {
   const { email, token, clearAuthData } = useAuth();
@@ -27,25 +25,6 @@ function Navbar() {
   const [anchorElCart, setAnchorElCart] = React.useState<null | HTMLElement>(
     null
   );
-
-  const { cartItems, totalPrice, setCartData } = useCart();
-
-  React.useEffect(() => {
-    if (token) {
-      fetch("http://localhost:3001/carts/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setCartData(data.items, data.totalPrice);
-        })
-        .catch((error) => console.error("Error fetching cart data:", error));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
 
   const handleOpenCartMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCart(event.currentTarget);
@@ -77,12 +56,6 @@ function Navbar() {
     navigate("/orders");
     setAnchorElUser(null);
   };
-
-  // Calculate the total quantity of items in the cart
-  const totalCartQuantity = cartItems.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  );
 
   return (
     <AppBar position="static">
@@ -133,63 +106,11 @@ function Navbar() {
           <Box sx={{ flexGrow: 1 }} />
 
           {token && (
-            <>
-              {/* Cart Icon with Badge */}
-              <IconButton
-                color="inherit"
-                onClick={handleOpenCartMenu}
-                sx={{ mr: 1 }}
-              >
-                <Badge badgeContent={totalCartQuantity} color="secondary">
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
-
-              <Menu
-                sx={{ mt: "45px" }}
-                id="cart-menu"
-                anchorEl={anchorElCart}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElCart)}
-                onClose={handleCloseCartMenu}
-              >
-                {cartItems.map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
-                    {/* Display item image */}
-                    <Box
-                      component="img"
-                      src={item.image}
-                      alt={item.title}
-                      sx={{ width: 40, height: 40, borderRadius: 1 }}
-                    />
-                    {/* Display item details */}
-                    <Box>
-                      <Typography variant="subtitle1">{item.title}</Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Price: EGP {item.price} | Qty: {item.quantity}
-                      </Typography>
-                    </Box>
-                  </MenuItem>
-                ))}
-
-                <MenuItem divider>
-                  <Typography sx={{ fontWeight: "bold" }}>
-                    Total: EGP {totalPrice}
-                  </Typography>
-                </MenuItem>
-              </Menu>
-            </>
+            <CartMenu
+              anchorElCart={anchorElCart}
+              handleOpenCartMenu={handleOpenCartMenu}
+              handleCloseCartMenu={handleCloseCartMenu}
+            />
           )}
 
           {email ? (
