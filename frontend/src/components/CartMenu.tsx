@@ -1,4 +1,3 @@
-// CartMenu.tsx
 import * as React from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -7,11 +6,12 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import DeleteIcon from "@mui/icons-material/Delete"; // Import delete icon
-import Button from "@mui/material/Button"; // Import button for clear cart
+import DeleteIcon from "@mui/icons-material/Delete";
+import Button from "@mui/material/Button";
 import { useCart } from "../Cart/CartContext";
 import { useAuth } from "../Auth/AuthContext";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 type CartMenuProps = {
   anchorElCart: HTMLElement | null;
@@ -27,6 +27,7 @@ function CartMenu({
   const { token } = useAuth();
   const { cartItems, totalPrice, setCartData, removeItem, clearCart } =
     useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (token) {
@@ -45,20 +46,26 @@ function CartMenu({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  // Calculate the total quantity of items in the cart
   const totalCartQuantity = cartItems.reduce(
     (acc, item) => acc + item.quantity,
     0
   );
 
-  // Handle item removal
   const handleRemoveItem = (itemId: string) => {
     removeItem(itemId);
   };
 
-  // Handle clearing the cart
   const handleClearCart = () => {
     clearCart();
+    handleCloseCartMenu();
+  };
+
+  const handleCheckout = () => {
+    // Logic for checkout (e.g., navigating to checkout page)
+    console.log("Proceeding to checkout...");
+    //navigate to checkout page
+    navigate("/checkout");
+    handleCloseCartMenu();
   };
 
   return (
@@ -118,11 +125,27 @@ function CartMenu({
           </Typography>
         </MenuItem>
 
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 1 }}>
-          <Button variant="contained" color="error" onClick={handleClearCart}>
-            Clear Cart
-          </Button>
-        </Box>
+        {cartItems.length > 0 && ( // Conditional rendering
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-evenly",
+              mt: 1,
+              mb: 1,
+            }}
+          >
+            <Button variant="contained" color="error" onClick={handleClearCart}>
+              Clear Cart
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCheckout}
+            >
+              Checkout
+            </Button>
+          </Box>
+        )}
       </Menu>
     </>
   );

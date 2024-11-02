@@ -54,7 +54,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
           // Call the API to update the cart item
           updateCartItem(existingItem.item, potentialNewQuantity, token);
         } else {
-          console.log("Stock limit exceeded; item not added or updated.");
+          alert("Stock limit exceeded; item not added or updated.");
           return prevItems; // Return previous items if stock is exceeded
         }
       } else {
@@ -76,7 +76,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
           // Call the API to add a new cart item
           addCartItem(item._id, item.quantity, token);
         } else {
-          console.log("Stock limit exceeded for new item; item not added.");
+          alert("Stock limit exceeded; item not added or updated.");
           return prevItems; // Return previous items if stock is exceeded
         }
       }

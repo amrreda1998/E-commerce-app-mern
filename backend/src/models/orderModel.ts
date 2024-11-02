@@ -19,7 +19,7 @@ const orderItemSchema: Schema = new Schema({
 });
 
 //create an interface for orders
-interface IOrder extends Document {
+export interface IOrder extends Document {
   userID: string | ObjectId;
   address: string;
   orderItems: IOrderItem[];

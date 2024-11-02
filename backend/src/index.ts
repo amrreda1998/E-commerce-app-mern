@@ -6,6 +6,7 @@ import { productsRouter } from "./routers/productsRouter";
 import { cartsRouter } from "./routers/cartRouter";
 import "dotenv/config";
 import cors from "cors";
+import { ordersRouter } from "./routers/ordersRouter";
 
 // create the express server app
 const app = express();
@@ -36,6 +37,8 @@ app.use("/users", userRouter);
 app.use("/products", productsRouter);
 
 app.use("/carts", cartsRouter);
+
+app.use("/orders", ordersRouter);
 
 // make the server listen on port
 app.listen(port, () => {
