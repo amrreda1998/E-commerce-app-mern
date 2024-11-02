@@ -1,11 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { productModel } from "./productModel";
+import { eCommerceDB } from "./mongoConnection";
 
 // const cartStatus = ["active", "completed"];
 
 //interface for cart item
-export interface ICartItem  {
+export interface ICartItem {
   item: string;
-  unitPrice: number;
+  price: number;
   quantity: number;
 }
 //interface for cart
@@ -18,7 +20,7 @@ interface ICart extends Document {
 
 const cartItemSchema: Schema = new Schema({
   item: { type: mongoose.Types.ObjectId, ref: "products", required: true },
-  unitPrice: { type: Number, required: true },
+  price: { type: Number, required: true },
   quantity: { type: Number, required: true, default: 1 },
 });
 
@@ -30,5 +32,6 @@ const cartSchema: Schema = new Schema({
 });
 
 //determine the database you want to connect
-const eCommerceDB = mongoose.connection.useDb("e-commerce");
+
+
 export const cartModel = eCommerceDB.model<ICart>("carts", cartSchema);

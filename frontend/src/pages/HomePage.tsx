@@ -6,7 +6,7 @@ import { productCardProps } from "../types/productType";
 import { BackendURL } from "../constants/baseURL";
 
 const HomePage = () => {
-  const [products, setProdcuts] = useState([]);
+  const [products, setProdcuts] = useState<productCardProps[]>([]);
   //handel errors
   const [error, setError] = useState(false);
 
@@ -15,7 +15,7 @@ const HomePage = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${BackendURL}/products`);
-        const data = await response.json();
+        const { data } = await response.json();
         setProdcuts(data);
       } catch {
         setError(true);
@@ -36,7 +36,7 @@ const HomePage = () => {
     <Container sx={{ mt: 2 }}>
       <Grid container spacing={3}>
         {products.map((p: productCardProps) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid key={p._id} size={{ xs: 12, sm: 6, md: 4 }}>
             <ProductCard {...p}></ProductCard>
           </Grid>
         ))}

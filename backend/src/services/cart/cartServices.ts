@@ -4,8 +4,27 @@ import { cartModel, ICartItem } from "../../models/cartModel";
 import { IOrderItem, orderModel } from "../../models/orderModel";
 import { Iproduct, productModel } from "../../models/productModel";
 
-export const getActiveCart = async (userID: string) => {
-  const activeCart = await cartModel.findOne({ userID, status: "active" });
+interface getActiveCartProps {
+  userID: string;
+  populateProduct?: boolean;
+}
+
+export const getActiveCart = async ({
+  userID,
+  populateProduct,
+}: getActiveCartProps) => {
+  let activeCart;
+  if (populateProduct) {
+    activeCart = await cartModel
+      .findOne({ userID, status: "active" })
+      .populate({
+        path: "items.item", // Match the field name exactly as defined in `cartItemSchema`
+      });
+
+    //reformat the active cart here before returing it so that it will be as the font end format
+  } else {
+    activeCart = await cartModel.findOne({ userID, status: "active" });
+  }
   //if there is no active cart create one
   if (!activeCart) {
     //create a one
@@ -28,15 +47,7 @@ export const addItemToCart = async ({
   userID,
 }: addItemToCartProps) => {
   //get the active cart
-  const activeCart = await getActiveCart(userID);
-
-  //check if the product already in the cart
-  const ExistedInActiveCart = activeCart.items.find(
-    (CartItem) => CartItem.item.toString() === productId.toString()
-  );
-  if (ExistedInActiveCart) {
-    return { data: "Product is already added to the cart", status: 400 };
-  }
+  const activeCart = await getActiveCart({ userID });
 
   //get product to push into the cart items
   const product = await productModel.findById(productId);
@@ -56,7 +67,7 @@ export const addItemToCart = async ({
   //add the new item to the cart
   activeCart.items.push({
     item: productId,
-    unitPrice: product.price,
+    price: product.price,
     quantity: quantity,
   });
 
@@ -84,7 +95,7 @@ export const updateCartItem = async ({
   userID,
 }: cartItemUpdateProps) => {
   //get the active cart
-  const activeCart = await getActiveCart(userID);
+  const activeCart = await getActiveCart({ userID });
 
   //search by productID in the active cart
   const cartItem = activeCart.items.find(
@@ -111,13 +122,13 @@ export const updateCartItem = async ({
   }
 
   //remove the old item calculation from  total price
-  activeCart.totalPrice -= cartItem.quantity * cartItem.unitPrice;
+  activeCart.totalPrice -= cartItem.quantity * cartItem.price;
 
   //update the values that the user wants in the cart item
   cartItem.quantity = newQuantity;
 
   //recalculate the total price with every update
-  activeCart.totalPrice += cartItem.quantity * cartItem.unitPrice;
+  activeCart.totalPrice += cartItem.quantity * cartItem.price;
 
   //save the sate of the database
   activeCart.save();
@@ -137,7 +148,7 @@ export const deleteCartItem = async ({
   productId,
 }: deleteItemProps) => {
   //get the active cart
-  const activeCart = await getActiveCart(userID);
+  const activeCart = await getActiveCart({ userID });
   console.log(userID);
   console.log(productId);
   //find the item that want to be deleted in the cart
@@ -149,7 +160,7 @@ export const deleteCartItem = async ({
     return { data: "item was not found in the cart", status: 404 };
   }
   //decrease the total price by the amount of the deleted item
-  activeCart.totalPrice -= cartItem.unitPrice * cartItem.quantity;
+  activeCart.totalPrice -= cartItem.price * cartItem.quantity;
 
   //find and delete the product from the active cart and update the active cart items
   activeCart.items = activeCart.items.filter(
@@ -164,7 +175,7 @@ export const deleteCartItem = async ({
 
 export const clearCart = async (userID: string) => {
   //get the active cart
-  const activeCart = await getActiveCart(userID);
+  const activeCart = await getActiveCart({ userID });
   //check if the cart is already clear
   if (activeCart.items.length === 0) {
     return { data: "The cart is already empty", status: 400 };
@@ -182,7 +193,7 @@ export const clearCart = async (userID: string) => {
 
 export const checkOut = async (userID: string, address: string) => {
   //get active cart
-  const activeCart = await getActiveCart(userID);
+  const activeCart = await getActiveCart({ userID });
   //check if the cart is empty :
   if (activeCart.items.length === 0) {
     return { data: "The cart is empty !!", status: 400 };
@@ -192,7 +203,7 @@ export const checkOut = async (userID: string, address: string) => {
     const orderItem: IOrderItem = {
       title: product.title,
       image: product.image,
-      unitPrice: item.unitPrice,
+      price: item.price,
       quantity: item.quantity,
     };
 
@@ -224,8 +235,6 @@ export const checkOut = async (userID: string, address: string) => {
 
       // Push the order item into the orderItems array
       orderItems.push(orderItem);
-      
-    
     }
 
     return orderItems; // Return the populated orderItems array
@@ -242,6 +251,6 @@ export const checkOut = async (userID: string, address: string) => {
   //update the cart status
   activeCart.status = "completed";
   activeCart.save();
-  
+
   return { data: newOrder, status: 201 };
 };

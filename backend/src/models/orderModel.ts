@@ -7,14 +7,14 @@ import { Schema, Document } from "mongoose";
 export interface IOrderItem {
   title: string;    
   image: string;
-  unitPrice: number;
+  price: number;
   quantity: number;
 }
 //create the order item schema
 const orderItemSchema: Schema = new Schema({
   title: { type: String, required: true },
   image: { type: String, required: true },
-  unitPrice: { type: Number, required: true },
+  price: { type: Number, required: true },
   quantity: { type: Number, required: true },
 });
 

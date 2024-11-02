@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { eCommerceDB } from "./mongoConnection";
 
 export interface Iproduct extends Document {
   title: string;
@@ -14,8 +15,7 @@ export const productSchema: Schema = new Schema({
   stock: { type: Number, required: true, default: 0 },
 });
 
-//determine the database you want to connect
-const eCommerceDB = mongoose.connection.useDb("e-commerce");
+
 
 export const productModel = eCommerceDB.model<Iproduct>(
   "products",
