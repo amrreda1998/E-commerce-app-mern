@@ -36,10 +36,18 @@ export default function ProdcutCard({
     if (!token) {
       alert("Please Login First to Add items to your cart");
     } else {
-      addToCart({
-        _id, title, image, price, quantity, stock,
-        item: ""
-      }, token); // Send product data to cart
+      addToCart(
+        {
+          _id,
+          title,
+          image,
+          price,
+          quantity,
+          stock,
+          item: "",
+        },
+        token
+      ); // Send product data to cart
     }
   };
 
@@ -53,7 +61,7 @@ export default function ProdcutCard({
     >
       <CardMedia
         sx={{
-          height: { xs: 150, sm: 200, md: 300 },
+          height: { xs: 150, sm: 200, md: 250 },
           transition: "transform 0.3s ease-in-out",
           "&:hover": {
             transform: "scale(1.1)",
@@ -63,7 +71,18 @@ export default function ProdcutCard({
         title={title}
       />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography
+          gutterBottom
+          variant="h5"
+          component="div"
+          sx={{
+            whiteSpace: "nowrap", // Prevents line breaks
+            overflow: "hidden", // Hides overflow text
+            textOverflow: "ellipsis", // Adds "..." at the end of truncated text
+            maxWidth: "100%", // Ensures it doesn't exceed card width
+            fontSize: { xs: "1rem", sm: "1.2rem", md: "1.3rem" }, // Responsive font size
+          }}
+        >
           {title}
         </Typography>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>

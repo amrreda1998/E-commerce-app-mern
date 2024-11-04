@@ -1,6 +1,6 @@
 import { Container, TextField, Button, Typography, Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BackendURL } from "../constants/baseURL";
 import { useAuth } from "../Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +28,12 @@ const LoginPage = () => {
 
   //use authenticatinContext
   const { setAuthData } = useAuth();
+
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [isLogin, navigate]);
 
   // Handling form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,7 +63,6 @@ const LoginPage = () => {
           //use it when the user try to request a service form the backend (authentucat)
           setAuthData(formData.email, data);
           setIsLogin(true);
-          
         } else {
           setIsValidEmail(false);
         }
@@ -76,12 +81,6 @@ const LoginPage = () => {
       </Box>
     );
   }
-
-  if (isLogin) {
-    //navigate to the home page
-    navigate("/");
-  }
-
   return (
     <Container
       sx={{
