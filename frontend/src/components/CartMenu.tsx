@@ -12,6 +12,7 @@ import { useCart } from "../Cart/CartContext";
 import { useAuth } from "../Auth/AuthContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { BackendURL } from "../constants/baseURL";
 
 type CartMenuProps = {
   anchorElCart: HTMLElement | null;
@@ -31,7 +32,7 @@ function CartMenu({
 
   useEffect(() => {
     if (token) {
-      fetch("http://localhost:3001/carts/", {
+      fetch(`${BackendURL}/carts/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

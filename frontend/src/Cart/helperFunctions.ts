@@ -1,7 +1,9 @@
+import { BackendURL } from "../constants/baseURL";
+
   // Function to update the cart item on the backend
   export const updateCartItem = async (productId: string, newQuantity: number, token: string) => {
     try {
-      const response = await fetch("http://localhost:3001/carts/item", {
+      const response = await fetch(`${BackendURL}/carts/item`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +30,7 @@
   // Function to add a new cart item on the backend
   export const addCartItem = async (productId: string, quantity: number, token: string) => {
     try {
-      const response = await fetch("http://localhost:3001/carts", {
+      const response = await fetch(`${BackendURL}/carts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +59,7 @@
     // Function to update the cart item on the backend
     export const ClearCartFrombackend = async (token: string) => {
       try {
-        const response = await fetch("http://localhost:3001/carts/item/", {
+        const response = await fetch(`${BackendURL}/carts/item/`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +84,7 @@
   // Function to add a new cart item on the backend
   export const removeItemFromBackend = async (productId: string ,token:string) => {
 
-      const response = await fetch(`http://localhost:3001/carts/item/${productId}`, {
+      const response = await fetch(`${BackendURL}/carts/item/${productId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

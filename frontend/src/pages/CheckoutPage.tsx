@@ -5,12 +5,13 @@ import Button from "@mui/material/Button";
 import { useCart } from "../Cart/CartContext";
 import { useAuth } from "./../Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { BackendURL } from "../constants/baseURL";
 
 const USER_ADDRESS = "Dummy Address";
 
 //helper functions :
 const checkoutFromBackend = async (address: string, token: string) => {
-  const response = await fetch(`http://localhost:3001/carts/checkout`, {
+  const response = await fetch(`${BackendURL}/carts/checkout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
