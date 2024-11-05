@@ -7,6 +7,7 @@ import { cartsRouter } from "./routes/cartRouter";
 import "dotenv/config";
 import cors from "cors";
 import { ordersRouter } from "./routes/ordersRouter";
+import { testRouter } from "./routes/TestRouter";
 
 // create the express server app
 const app = express();
@@ -27,10 +28,12 @@ mongoose
 seedInitialProdcuts();
 
 //use middle wate to determine the domains that can request data from the backend
-app.use(cors({
-  origin: '*', // Replace with your frontend URL
-  credentials: true // Allow cookies to be sent
-}));
+app.use(
+  cors({
+    origin: "*", // Replace with your frontend URL
+    credentials: true, // Allow cookies to be sent
+  })
+);
 
 //use middle ware to parse json reqs body
 app.use(express.json());
@@ -44,6 +47,12 @@ app.use("/carts", cartsRouter);
 
 app.use("/orders", ordersRouter);
 
+
+//testing 
+app.use("/", testRouter);
+
+
+
 //deployment in vercel deos not reuire app.listen because it is serverless
 
 // make the server listen on port
@@ -52,4 +61,3 @@ app.listen(port, () => {
 });
 
 export default app;
-
