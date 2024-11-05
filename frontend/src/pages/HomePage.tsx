@@ -14,7 +14,7 @@ const HomePage = () => {
     //modern syntax to fetch data from a server (more readable , scalability(no nesting then() (callback hell) ))
     const fetchData = async () => {
       try {
-        const response = await fetch(`${BackendURL}/products`);
+        const response = await fetch(`${BackendURL}/`);
         const { data } = await response.json();
         setProdcuts(data);
       } catch {
