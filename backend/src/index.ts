@@ -27,7 +27,13 @@ mongoose
 seedInitialProdcuts();
 
 //use middle wate to determine the domains that can request data from the backend
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173/", // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // Allow cookies to be sent
+  })
+);
 //use middle ware to parse json reqs body
 app.use(express.json());
 // use a router to handle/recieve reqs with specific urls for users
