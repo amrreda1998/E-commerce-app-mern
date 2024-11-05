@@ -38,7 +38,7 @@ app.use(express.json());
 app.use("/users", userRouter);
 
 // use a router to handle/recieve reqs with specific urls for products
-app.use("/", productsRouter);
+app.use("/products", productsRouter);
 
 app.use("/carts", cartsRouter);
 
