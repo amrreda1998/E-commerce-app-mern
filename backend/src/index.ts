@@ -46,9 +46,10 @@ app.use("/orders", ordersRouter);
 
 //deployment in vercel deos not reuire app.listen because it is serverless
 
+// make the server listen on port
+app.listen(port, () => {
+  console.log(`Server is Listening on port ${port} .....`);
+});
+
 export default app;
 
-// // make the server listen on port
-// app.listen(port, () => {
-//   console.log(`Server is Listening on port ${port} .....`);
-// });
