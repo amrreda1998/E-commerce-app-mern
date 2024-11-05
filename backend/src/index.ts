@@ -1,12 +1,12 @@
 import express, { json } from "express";
 import mongoose from "mongoose";
-import { userRouter } from "./routers/userRouter";
+import { userRouter } from "./routes/userRouter";
 import { seedInitialProdcuts } from "./services/products/productsServices";
-import { productsRouter } from "./routers/productsRouter";
-import { cartsRouter } from "./routers/cartRouter";
+import { productsRouter } from "./routes/productsRouter";
+import { cartsRouter } from "./routes/cartRouter";
 import "dotenv/config";
 import cors from "cors";
-import { ordersRouter } from "./routers/ordersRouter";
+import { ordersRouter } from "./routes/ordersRouter";
 
 // create the express server app
 const app = express();
@@ -31,6 +31,7 @@ app.use(cors({
   origin: '*', // Replace with your frontend URL
   credentials: true // Allow cookies to be sent
 }));
+
 //use middle ware to parse json reqs body
 app.use(express.json());
 // use a router to handle/recieve reqs with specific urls for users
